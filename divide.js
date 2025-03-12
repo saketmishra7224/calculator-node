@@ -1,5 +1,5 @@
 const divideRequestHandler = (req, res) =>{
-  console.log("In Sum Request Handler", req.url);
+  console.log("In Division Request Handler", req.url);
   const body = [];
   req.on('data', chunk => {
     body.push(chunk);

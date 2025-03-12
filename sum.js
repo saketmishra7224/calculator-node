@@ -20,6 +20,7 @@ const sumRequestHandler = (req, res) =>{
         </body>
       <html>`
     );
+    return res.end();
   })
 }
 
