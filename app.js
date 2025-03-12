@@ -1,8 +1,6 @@
-const http = require('http');
-const { requestHandler } = require('./handler');
-const server = http.createServer(requestHandler);
+const app = require('./handler');
 
-const PORT =3001;
-server.listen(PORT, ()=>{
+const PORT = 3000;
+app.listen(PORT, () => {
   console.log(`Server running on address http://localhost:${PORT}`);
-})
+});

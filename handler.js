@@ -1,173 +1,384 @@
+const express = require('express');
+const path = require('path');
 const { sumRequestHandler } = require('./sum');
 const { productRequestHandler } = require('./product');
 const { diffRequestHandler } = require('./diff');
 const { divideRequestHandler } = require('./divide');
 
-const requestHandler = (req,res) =>{
-  console.log(req.url,req.method);
-  if(req.url === '/'){
+const app = express();
 
+// Middleware to parse URL-encoded bodies
+app.use(express.urlencoded({ extended: true }));
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Define routes
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/sum', (req, res) => {
     res.setHeader("Content-Type", 'text/html');
-    res.write(`
-      <html>
-        <head><title> Calculator </title>
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    res.write(`<html>
+    <head><title> Calculator </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+            body {
+                height: 100vh;
+                background-image: url("/calculator.jpeg");
+                background-color: #cccccc;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .calculator-container {
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+            h1, h2 {
+                color: #333;
+                margin-bottom: 1.5rem;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            input[type="text"] {
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 200px;
+                text-align: center;
+            }
+            input[type="submit"] {
+                background-color: #198754;
+                color: white;
+                border: none;
+                padding: 0.5rem 2rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            input[type="submit"]:hover {
+                background-color: #146c43;
+            }
+            .operator {
+                font-size: 24px;
+                font-weight: bold;
+                margin: 0 10px;
+            }
+            .input-group {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="calculator-container">
+            <h1>Welcome To Calculator</h1>
+            <h2>Sum Calculator</h2>
+            <form action="/calculate-sum" method="POST">
+                <div class="input-group">
+                    <input type="text" placeholder="First Number" name="first" required />
+                    <span class="operator">+</span>
+                    <input type="text" placeholder="Second Number" name="second" required />
+                </div>
+                <input type="submit" value="Calculate Sum" class="btn btn-success">
+            </form>
+            <br>
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+    </body>
+    </html>`);
+    res.end();
+});
 
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-          <style>
-                body{
-                      height: 100%;
-                      background-image: url("C:\Users\Saket\OneDrive\Desktop\projects\Calculator-node\calculator.jpeg");
-                      background-color: #cccccc;
-                    }
-            a { text-decoration: none;
-                color:white;
-              }
-            h1{
-                text-align:center;  
-              }
-            div{
-                  text-align:center;
-                }
-          </style>
-        </head>
+app.post('/calculate-sum', sumRequestHandler);
+app.get('/product', (req, res) => {
+    res.setHeader("Content-Type", 'text/html');
+    res.write(`<html>
+    <head><title> Calculator </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+            body {
+                height: 100vh;
+                background-image: url("/calculator.jpeg");
+                background-color: #cccccc;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .calculator-container {
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+            h1, h2 {
+                color: #333;
+                margin-bottom: 1.5rem;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            input[type="text"] {
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 200px;
+                text-align: center;
+            }
+            input[type="submit"] {
+                background-color: #198754;
+                color: white;
+                border: none;
+                padding: 0.5rem 2rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            input[type="submit"]:hover {
+                background-color: #146c43;
+            }
+            .operator {
+                font-size: 24px;
+                font-weight: bold;
+                margin: 0 10px;
+            }
+            .input-group {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="calculator-container">
+            <h1>Welcome To Calculator</h1>
+            <h2>Product Calculator</h2>
+            <form action="/calculate-product" method="POST">
+                <div class="input-group">
+                    <input type="text" placeholder="First Number" name="first" required />
+                    <span class="operator">X</span>
+                    <input type="text" placeholder="Second Number" name="second" required />
+                </div>
+                <input type="submit" value="Calculate Product" class="btn btn-success">
+            </form>
+            <br>
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+    </body>
+    </html>`);
+    res.end();
+});
+
+app.post('/calculate-product', productRequestHandler);
+app.get('/diff', (req, res) => {
+    res.setHeader("Content-Type", 'text/html');
+    res.write(`<html>
+    <head><title> Calculator </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+            body {
+                height: 100vh;
+                background-image: url("/calculator.jpeg");
+                background-color: #cccccc;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .calculator-container {
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+            h1, h2 {
+                color: #333;
+                margin-bottom: 1.5rem;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            input[type="text"] {
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 200px;
+                text-align: center;
+            }
+            input[type="submit"] {
+                background-color: #198754;
+                color: white;
+                border: none;
+                padding: 0.5rem 2rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            input[type="submit"]:hover {
+                background-color: #146c43;
+            }
+            .operator {
+                font-size: 24px;
+                font-weight: bold;
+                margin: 0 10px;
+            }
+            .input-group {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="calculator-container">
+            <h1>Welcome To Calculator</h1>
+            <h2>Difference Calculator</h2>
+            <form action="/calculate-diff" method="POST">
+                <div class="input-group">
+                    <input type="text" placeholder="First Number" name="first" required />
+                    <span class="operator">-</span>
+                    <input type="text" placeholder="Second Number" name="second" required />
+                </div>
+                <input type="submit" value="Calculate Difference" class="btn btn-success">
+            </form>
+            <br>
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+    </body>
+    </html>`);
+    res.end();
+});
+
+app.post('/calculate-diff', diffRequestHandler);
+app.get('/division', (req, res) => {
+    res.setHeader("Content-Type", 'text/html');
+    res.write(`<html>
+    <head><title> Calculator </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+            body {
+                height: 100vh;
+                background-image: url("/calculator.jpeg");
+                background-color: #cccccc;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+            }
+            .calculator-container {
+                background-color: rgba(255, 255, 255, 0.9);
+                padding: 2rem;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+                text-align: center;
+            }
+            h1, h2 {
+                color: #333;
+                margin-bottom: 1.5rem;
+            }
+            form {
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            input[type="text"] {
+                padding: 0.5rem;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                width: 200px;
+                text-align: center;
+            }
+            input[type="submit"] {
+                background-color: #198754;
+                color: white;
+                border: none;
+                padding: 0.5rem 2rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            input[type="submit"]:hover {
+                background-color: #146c43;
+            }
+            .operator {
+                font-size: 24px;
+                font-weight: bold;
+                margin: 0 10px;
+            }
+            .input-group {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            .note {
+                color: #666;
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="calculator-container">
+            <h1>Welcome To Calculator</h1>
+            <h2>Division Calculator</h2>
+            <form action="/calculate-division" method="POST">
+                <div class="input-group">
+                    <input type="text" placeholder="First Number" name="first" required />
+                    <span class="operator">/</span>
+                    <input type="text" placeholder="Second Number" name="second" required />
+                </div>
+                <p class="note">Note: First number is divided by Second</p>
+                <input type="submit" value="Calculate Division" class="btn btn-success">
+            </form>
+            <br>
+            <a href="/" class="btn btn-primary">Back to Home</a>
+        </div>
+    </body>
+    </html>`);
+    res.end();
+});
+
+app.post('/calculate-division', divideRequestHandler);
+
+// Handle 404
+app.use((req, res) => {
+    res.status(404).send(`
+    <html>
+        <head><title> Calculator </title></head>
         <body>
-          <h1>Welcome To Calculator</h1>
-          </br></br></br>
-          </br>
-          <div>
-            <button type="button" class="btn btn-success"><a href="/sum">Go To Sum</a></button></br></br></br>
-            <button type="button" class="btn btn-success"><a href="/product">Go To Product</a></button></br></br></br>
-            <button type="button" class="btn btn-success"><a href="/diff">Go To Difference</a></button></br></br></br>
-            <button type="button" class="btn btn-success"><a href="/division">Go To Division</a></button></br></br></br>
-          </br>
-          </div>
-          
+            <h1>Page Does Not Exist...</h1>
+            <a href="/">Go To Home</a>
         </body>
-      <html>`
-    );
-    return res.end();
-  }
-  
-  else if(req.url.toLowerCase() === '/sum'){
-    res.setHeader("Content-Type", 'text/html');
-    res.write(`<html>
-    <head><title> Calculator </title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    </html>`);
+});
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script></head>
-
-    <body>
-      <h1>Welcome To Calculator</h1>
-      <br>
-      <h2>Calculator</h2>
-      <form action="/calculate-sum" method="POST">
-        <input type="text" placeholder="First Num" name ="first" /> +
-        <input type="text" placeholder="Second Num" name ="second" />
-        <input type="submit" value="Sum">
-      </form>
-    </body>
-    <html>
-    `);
-    return res.end();
-  }else if(req.url.toLowerCase() === '/calculate-sum' && req.method === 'POST'){
-    return sumRequestHandler(req, res);
-    
-  }
-  else if(req.url.toLowerCase() === '/product'){
-    res.setHeader("Content-Type", 'text/html');
-    res.write(`<html>
-    <head><title> Calculator </title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script></head>
-
-    <body>
-      <h1>Welcome To Calculator</h1>
-      <br>
-      <h2>Calculator</h2>
-      <form action="/calculate-product" method="POST">
-        <input type="text" placeholder="First Num" name ="first" />X
-        <input type="text" placeholder="Second Num" name ="second" />
-        <input type="submit" value="Product">
-      </form>
-    </body>
-    <html>
-    `);
-    return res.end();
-  }
-  else if(req.url.toLowerCase() === '/calculate-product' && req.method === 'POST'){
-    return productRequestHandler(req, res);
-    
-  }
-  else if(req.url.toLowerCase() === '/diff'){
-    res.setHeader("Content-Type", 'text/html');
-    res.write(`<html>
-    <head><title> Calculator </title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script></head>
-
-    <body>
-      <h1>Welcome To Calculator</h1>
-      <br>
-      <h2>Calculator</h2>
-      <form action="/calculate-diff" method="POST">
-        <input type="text" placeholder="First Num" name ="first" />-
-        <input type="text" placeholder="Second Num" name ="second" />
-        <input type="submit" value="Diff">
-      </form>
-    </body>
-    <html>
-    `);
-    return res.end();
-  }
-  else if(req.url.toLowerCase() === '/calculate-diff' && req.method === 'POST'){
-    return diffRequestHandler(req, res);
-  }
-
-  else if(req.url.toLowerCase() === '/division'){
-    res.setHeader("Content-Type", 'text/html');
-    res.write(`<html>
-    <head><title> Calculator </title>
-    
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script></head>
-
-    <body>
-      <h1>Welcome To Calculator</h1>
-      <br>
-      <h2>Calculator</h2>
-      <form action="/calculate-division" method="POST">
-        <input type="text" placeholder="First Num" name ="first" /> /
-        <input type="text" placeholder="Second Num" name ="second" />
-        <p>Note: First number is divided by Second</p>
-        <input type="submit" value="Division">
-      </form>
-    </body>
-    <html>
-    `);
-    return res.end();
-  }
-  else if(req.url.toLowerCase() === '/calculate-division' && req.method === 'POST'){
-    return divideRequestHandler(req, res);
-    
-  }
-
-  res.setHeader("Content-Type", 'text/html');
-    res.write(`<html>
-    <head><title> Calculator </title></head>
-
-    <body><h1>Page Does Not Exists...</h1>
-          <a href="/">Go To Home</a>
-    </body>
-    <html>
-    `);
-    return res.end();
-}
-
-exports.requestHandler = requestHandler;
+module.exports = app;
